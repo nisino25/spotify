@@ -54,7 +54,7 @@ export default {
     },
 
     preload() {
-      this.images[0].src = "https://i.scdn.co/image/ab67616d0000b273ec8033df3e6a948f71cddc1c";
+      this.images[0].src = "https://github.com/nisino25/spotify/blob/main/src/assets/images/music-guy.jpg?raw=true";
       this.images[0].onload = () => {
         this.setup();
       };
