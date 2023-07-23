@@ -8,7 +8,7 @@
         <div id="photo-holder"></div>
       </div>
       <div id="preload"></div>
-        </div>
+    </div>
   </div>
   <div class="input-container">
     <span class="icon-left"><i class="fas fa-link"></i></span>
@@ -34,13 +34,18 @@ export default {
       
       photoCount: 6,
     pieceCount: 6,
-    onPhoto: 0,
+    onPhoto: -1,
     pieceCompleteCount: 0,
     delay: null,
     transitions: ['center', 'random'],
     transitionType: 0,
     // images: [], 
-    images: [new Image()],
+    // images: [new Image()],
+    images: [
+
+        { src: require('@/assets/images/music-guy.jpg'), loaded: false },
+      ],
+
     }
   },
   methods:{
@@ -53,9 +58,19 @@ export default {
       };
     },
 
+    // preload() {
+    //   this.images[0].src = "./assets/images/music-guy.jpg";
+    //   this.images[0].onload = () => {
+    //     this.setup();
+    //   };
+    // },
     preload() {
-      this.images[0].src = "https://github.com/nisino25/spotify/blob/main/src/assets/images/music-guy.jpg?raw=true";
-      this.images[0].onload = () => {
+      const image = new Image();
+      image.src = this.images[0].src;
+
+      image.onload = () => {
+        this.images[0].loaded = true;
+        // Perform any setup or logic that needs to happen after image preload here
         this.setup();
       };
     },
@@ -76,6 +91,11 @@ export default {
         section.style.width = newWidth + "%";
         section.style.height = newWidth + "%";
         section.style.backgroundSize = newBackgroundSize + "%";
+        // section.style.backgroundImage = 'url("' + this.images[this.onPhoto].src + '")';
+        ++this.onPhoto;
+        if (this.onPhoto >= this.images.length) {
+          this.onPhoto = 0;
+        }
         section.style.backgroundImage = 'url("' + this.images[this.onPhoto].src + '")';
 
         photoHolder.appendChild(section);
@@ -107,28 +127,30 @@ export default {
         }
 
         gsap.to(piece, 1, {
-  delay: spinDelay,
-  rotation: spin + '_long',
-  onComplete: this.completeRotation,
-  onCompleteParams: [piece],
-  ease: Power4.easeIn,
-});
+          delay: spinDelay,
+          rotation: spin + '_long',
+          onComplete: this.completeRotation,
+          onCompleteParams: [piece],
+          ease: Power4.easeIn,
+        });
       }
     },
     completeRotation(piece) {
-      piece.style.backgroundImage = 'url("' + this.images[this.onPhoto].src + '")';
+      // piece.style.backgroundImage = 'url("' + this.images[0].src + '")';
+      piece.style.backgroundImage = 'url("' + this.images[this.images.length - 1].src + '")';
+
       gsap.to(piece, 2, {
-  rotation: '0_short',
-  onComplete: this.finishPieceanimation,
-  ease: Elastic.easeOut,
-});
+        rotation: '0_short',
+        onComplete: this.finishPieceanimation,
+        ease: Elastic.easeOut,
+      });
     },
     finishPieceanimation() {
-  ++this.pieceCompleteCount;
-  if (this.pieceCompleteCount == this.pieceCount) {
-    // No more automatic rotation
-  }
-},
+      ++this.pieceCompleteCount;
+      if (this.pieceCompleteCount == this.pieceCount) {
+        // No more automatic rotation
+      }
+    },
 
   },
   mounted() {
@@ -170,6 +192,7 @@ export default {
   border-radius: 50%;
   width: calc(100% * 1/3);
   aspect-ratio: 1/1; */
+  border: 3px solid white;
 }
 
 
@@ -254,16 +277,14 @@ export default {
   border-radius: 50%;
   width: calc(100% * 2/5);
   aspect-ratio: 1/1;
-
-  border: 3px solid white;
-  border-radius: 50%;
 }
 
 #photo-holder {
   width: 100%;
   height: 100%;
   position: absolute;
-  
+  /* border: 3px solid white;
+  border-radius: 50%; */
 }
 
 .section {
